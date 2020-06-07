@@ -1,0 +1,51 @@
+Arguments: 
+  /home/giulia/.nvm/versions/node/v12.13.0/bin/node /home/giulia/.nvm/versions/node/v12.13.0/bin/yarn dev
+
+PATH: 
+  /home/giulia/anaconda3/bin:/home/giulia/anaconda3/condabin:/home/giulia/.nvm/versions/node/v12.13.0/bin:/home/giulia/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games
+
+Yarn version: 
+  1.22.4
+
+Node version: 
+  12.13.0
+
+Platform: 
+  linux x64
+
+Trace: 
+  SyntaxError: /home/giulia/Documentos/AcheSeuEcoponto/server/package.json: Unexpected token } in JSON at position 247
+      at JSON.parse (<anonymous>)
+      at /home/giulia/.nvm/versions/node/v12.13.0/lib/node_modules/yarn/lib/cli.js:1625:59
+      at Generator.next (<anonymous>)
+      at step (/home/giulia/.nvm/versions/node/v12.13.0/lib/node_modules/yarn/lib/cli.js:310:30)
+      at /home/giulia/.nvm/versions/node/v12.13.0/lib/node_modules/yarn/lib/cli.js:321:13
+
+npm manifest: 
+  {
+    "name": "server",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "dev": "ts-node-dev --transpileOnly --ignore-watch node_modules src/server.ts",
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+      "express": "^4.17.1"
+    },
+    "devDependencies": {
+      "@types/express": "^4.17.6",
+      "ts-node": "^8.10.2",
+      "typescript": "^3.9.5"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
