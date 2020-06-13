@@ -4,6 +4,7 @@ export async function up(knex: Knex) {
     return knex.schema.createTable('materiais', table => {
         table.increments('id').primary();
         table.string('material').notNullable();
+        table.string('imagem');
     });
 }
 
