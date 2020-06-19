@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import knex from '../database/connection';
 
 class EmpresasController {
+    // Cadastrar uma nova empresa
     async create(request: Request, response: Response) {
         const {
             cnpj,
@@ -46,10 +47,12 @@ class EmpresasController {
         });
 
         await trx('materiais_empresas').insert(materiaisEmpresa);
+        await trx.commit();
 
         return response.json({ success: true });
     }
 
+    // Mostrar informações de uma empresa específica
     async show(request: Request, response: Response) {
         const { id } = request.params;
 
@@ -59,14 +62,20 @@ class EmpresasController {
             return response.status(400).json({ message: 'Empresa não encontrada' });
         }
 
-        const items = await knex('materiais')
+        const materiais = await knex('materiais')
             .join('materiais_empresas', 'materiais.id', '=', 'materiais_empresas.material_id')
             .where('materiais_empresas.empresa_id', id)
             .select('materiais.material');
 
-        return response.json({ empresa, items });
+        const certificados = await knex('certificados')
+            .join('certificados_empresas', 'certificados.id', '=', 'certificados_empresas.certificado_id')
+            .where('certificados_empresas.empresa_id', id)
+            .select('certificados.certificado');
+
+        return response.json({ empresa, materiais, certificados });
     }
 
+    // Listar empresas
     async index(request: Request, response: Response) {
 
     }
