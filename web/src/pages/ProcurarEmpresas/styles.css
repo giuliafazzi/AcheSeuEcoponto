@@ -1,0 +1,38 @@
+#page-criar-empresa {
+  height: 100vh;
+}
+
+#page-criar-empresa .content {
+  width: 100%;
+  max-width: 90%;
+  display: flex;
+  margin-top: 30px;
+}
+
+#page-criar-empresa .content .filtros {
+  background-color: white;
+  width: 40%;
+  height: 100px;
+  box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  height: 80vh;
+  text-align: center;
+  padding: 30px;
+}
+
+#page-criar-empresa .content .filtros .titulo {
+  font-size: 1.25em;
+  color: var(--title-color);
+  font-family: Ubuntu;
+}
+
+
+#page-criar-empresa .content .mapa {
+  background-color: white;
+  width: 90%;
+  height: 100px;
+  box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  margin-left: 30px;
+  height: 80vh;
+}

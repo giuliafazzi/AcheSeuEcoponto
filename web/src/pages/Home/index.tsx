@@ -23,12 +23,25 @@ const Home = () => {
                     <h1>Portal AcheSeuEcoponto</h1>
                     <p>Encontre empresas e ecopontos para atender cada uma de suas necessidades de descarte de resíduos.</p>
 
-                    <Link to="/ecopontos">
-                        <span>
-                            <FaSearch />
-                        </span>
-                        <strong>Encontrar ecopontos</strong>
-                    </Link>
+                    <div className="field-group">
+                        <div className="field">
+                            <Link to="/ecopontos">
+                                <span>
+                                    <FaSearch />
+                                </span>
+                                <strong>Encontrar ecopontos</strong>
+                            </Link>
+                        </div>
+
+                        <div className="field">
+                            <Link to="/empresas">
+                                <span>
+                                    <FaSearch />
+                                </span>
+                                <strong>Encontrar empresas</strong>
+                            </Link>
+                        </div>
+                    </div>
                 </main>
             </div>
         </div>

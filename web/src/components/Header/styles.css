@@ -1,0 +1,32 @@
+header {
+  top: 0;
+  padding: 20px 40px 20px 40px;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: white;
+  box-shadow: 2px 2px 8px 1px rgba(0, 0, 0, 0.1);
+}
+
+header a {
+  color: var(--title-color);
+  font-weight: bold;
+  text-decoration: none;
+
+  display: flex;
+  align-items: center;
+}
+
+header a svg {
+  margin-right: 10px;
+  color: var(--primary-color);
+}
+
+.menu {
+  display: flex;
+}
+
+.menu a + a {
+  margin-left: 24px;
+}
