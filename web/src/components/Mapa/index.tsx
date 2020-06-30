@@ -1,19 +1,33 @@
 import React, { useState, useEffect } from 'react';
-import GoogleMapReact from 'google-map-react';
-import { Link, useHistory } from 'react-router-dom';
-import Marker from '../Marker';
+import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
+import Geocode from "react-geocode";
+import config from '../../config.json';
 
 import './styles.css';
 
-const AnyReactComponent = ({ text }: any) => <div>{text}</div>;
+const key = config.map_key;
+Geocode.setApiKey(key);
+
+// set response language. Defaults to english.
+Geocode.setLanguage("pt-br");
+
+// set response region. Its optional.
+// A Geocoding request with region=es (Spain) will return the Spanish city.
+Geocode.setRegion("br");
+
+// Enable or disable logs. Its optional.
+Geocode.enableDebug();
+
+const containerStyle = {
+    width: '100%',
+    height: '100%'
+};
 
 const Mapa = (props: any) => {
-    const [initialPosition, setInitialPosition] = useState<[number, number]>([0, 0]);
-
     const [center, setCenter] = useState({ lat: 0, lng: 0 });
-    const [zoom, setZoom] = useState(11);
+    const [address, setAddress] = useState("");
 
-    const history = useHistory();
+    const [map, setMap] = React.useState(null)
 
     useEffect(() => {
         if ("geolocation" in navigator) {
@@ -21,7 +35,7 @@ const Mapa = (props: any) => {
                 const { latitude, longitude } = position.coords;
 
                 setCenter({ lat: latitude, lng: longitude });
-                console.log(center);
+                decodificarLocalizacao(latitude, longitude);
             });
         } else {
             alert("Not Available");
@@ -29,30 +43,34 @@ const Mapa = (props: any) => {
 
     }, []);
 
-    /*useEffect(() => {
-        navigator.geolocation.getCurrentPosition(position => {
-            const { latitude, longitude } = position.coords;
-
-            setCenter({ lat: latitude, lng: longitude })
-            //alert(center.lat);
-        });
-
-    }, []);*/
+    function decodificarLocalizacao(lat: number, lng: number) {
+        // Get address from latitude & longitude.
+        Geocode.fromLatLng(lat.toString(), lng.toString()).then(
+            response => {
+                setAddress(response.results[0].formatted_address);
+                console.log(address);
+            },
+            error => {
+                console.error(error);
+            }
+        );
+    }
 
     return (
         <div style={{ height: '100%', width: '100%', MozBorderRadius: '8px' }}>
-            <GoogleMapReact
-                bootstrapURLKeys={{ key: 'AIzaSyBMM4FSTN2KrlYBuJpoBhGE9S-V6L8BRjg' }}
-                defaultCenter={center}
-                defaultZoom={zoom}
+            <LoadScript
+                googleMapsApiKey={key}
             >
-                <Marker
-                    lat={11.0168}
-                    lng={76.9558}
-                    name="My Marker"
-                    color="blue"
-                />
-            </GoogleMapReact>
+                <GoogleMap
+                    mapContainerStyle={containerStyle}
+                    center={center}
+                    zoom={14}
+                >
+                    <Marker
+                        position={center}
+                    />
+                </GoogleMap>
+            </LoadScript>
         </div>
     );
 }
