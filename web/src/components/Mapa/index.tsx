@@ -35,26 +35,12 @@ const Mapa = (props: any) => {
                 const { latitude, longitude } = position.coords;
 
                 setCenter({ lat: latitude, lng: longitude });
-                decodificarLocalizacao(latitude, longitude);
             });
         } else {
             alert("Not Available");
         }
 
     }, []);
-
-    function decodificarLocalizacao(lat: number, lng: number) {
-        // Get address from latitude & longitude.
-        Geocode.fromLatLng(lat.toString(), lng.toString()).then(
-            response => {
-                setAddress(response.results[0].formatted_address);
-                console.log(address);
-            },
-            error => {
-                console.error(error);
-            }
-        );
-    }
 
     return (
         <div style={{ height: '100%', width: '100%', MozBorderRadius: '8px' }}>
