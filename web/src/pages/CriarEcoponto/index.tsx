@@ -1,11 +1,18 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { FaChevronLeft } from 'react-icons/fa';
+import api from '../../services/api';
 import axios from 'axios';
 
 import './styles.css';
 
 import Header from '../../components/Header';
+
+interface Material {
+    id: number;
+    nome: string;
+    imagem_url: string;
+}
 
 interface IBGEUFResponse {
     sigla: string;
@@ -16,11 +23,22 @@ interface IBGECityResponse {
 }
 
 const CriarEcoponto = () => {
+    const [materiais, setMateriais] = useState<Material[]>([]);
     const [ufs, setUfs] = useState<string[]>([]);
     const [cidades, setCidades] = useState<string[]>([]);
 
+    const [selectedMateriais, setSelectedMateriais] = useState<number[]>([]);
     const [selectedEstado, setSelectedEstado] = useState('0');
     const [selectedCidade, setSelectedCidade] = useState('0');
+
+    useEffect(() => {
+        api.get('materiais').then(response => {
+            console.log(response.data);
+            setMateriais(response.data);
+        });
+
+
+    }, []);
 
     useEffect(() => {
         axios.get<IBGEUFResponse[]>('https://servicodados.ibge.gov.br/api/v1/localidades/estados').then(response => {
@@ -58,6 +76,20 @@ const CriarEcoponto = () => {
         setSelectedCidade(cidade);
     }
 
+    function handleSelectMaterial(id: number) {
+        const alreadySelected = selectedMateriais.findIndex(material => material === id);
+
+        if (alreadySelected >= 0) {
+            const filteredMateriais = selectedMateriais.filter(material => material != id);
+
+            setSelectedMateriais(filteredMateriais);
+        }
+        else {
+            setSelectedMateriais([...selectedMateriais, id]);
+        }
+
+    }
+
 
     return (
         <div id="page-criar-ecoponto">
@@ -65,7 +97,7 @@ const CriarEcoponto = () => {
 
             <div className="content">
                 <form>
-                    <h1>Cadastro do ecoponto</h1>
+                    <h1>Cadastrar ecoponto</h1>
 
                     <fieldset>
                         <legend>
@@ -95,11 +127,6 @@ const CriarEcoponto = () => {
                             <h2>Endereço</h2>
                         </legend>
 
-                        <div className="field">
-                            <label htmlFor="endereco">Endereço</label>
-                            <input type="text" name="endereco" id="endereco" />
-                        </div>
-
                         <div className="field-group">
                             <div className="field">
                                 <label htmlFor="uf">Estado</label>
@@ -118,7 +145,7 @@ const CriarEcoponto = () => {
                             </div>
 
                             <div className="field">
-                                <label htmlFor="city">Cidade</label>
+                                <label htmlFor="cidade">Cidade</label>
                                 <select
                                     name="cidade"
                                     id="cidade"
@@ -133,6 +160,25 @@ const CriarEcoponto = () => {
                                 </select>
                             </div>
                         </div>
+
+                        <div className="field-group">
+                            <div className="field">
+                                <label htmlFor="cep">CEP</label>
+                                <input type="text" name="cep" id="cep" />
+                            </div>
+
+                            <div className="field">
+                                <label htmlFor="bairro">Bairro</label>
+                                <input type="text" name="bairro" id="bairro" />
+                            </div>
+                        </div>
+
+                        <div className="field">
+                            <label htmlFor="endereco">Endereço</label>
+                            <input type="text" name="endereco" id="endereco" />
+                        </div>
+
+
                     </fieldset>
 
                     <fieldset>
@@ -142,35 +188,17 @@ const CriarEcoponto = () => {
                         </legend>
 
                         <ul className="items-grid">
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
+                            {materiais.map(material => (
+                                <li
+                                    key={material.id}
+                                    onClick={() => handleSelectMaterial(material.id)}
+                                    className={selectedMateriais.includes(material.id) ? 'selected' : ''}
+                                >
 
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
-
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
-
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
-
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
-
-                            <li>
-                                <img src="http://localhost:3333/uploads/oleos.svg" alt="" />
-                                <span>Óleo de Cozinha</span>
-                            </li>
+                                    <img src={material.imagem_url} alt={material.nome} />
+                                    <span>{material.nome}</span>
+                                </li>
+                            ))}
                         </ul>
                     </fieldset>
 

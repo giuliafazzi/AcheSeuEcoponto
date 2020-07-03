@@ -8,7 +8,8 @@ class MateriaisController {
 
         const serializedMateriais = materiais.map(material => {
             return {
-                nome: material.nome,
+                id: material.id,
+                nome: material.material,
                 imagem_url: `http://localhost:3333/uploads/${material.imagem}`
             };
         });
