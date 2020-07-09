@@ -6,6 +6,7 @@ export async function up(knex: Knex) {
         table.string('nome').notNullable();
         table.decimal('latitude').notNullable();
         table.decimal('longitude').notNullable();
+        table.string('cep').notNullable();
         table.string('endereco').notNullable();
         table.string('cidade').notNullable();
         table.string('uf').notNullable();
