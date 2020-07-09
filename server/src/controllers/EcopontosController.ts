@@ -6,13 +6,11 @@ class EcopontosController {
     async create(request: Request, response: Response) {
         const {
             nome,
-            latitude,
-            longitude,
             cep,
             bairro,
             endereco,
             cidade,
-            uf,
+            estado,
             telefone,
             email,
             materiais
@@ -22,13 +20,11 @@ class EcopontosController {
 
         const id = await trx('ecopontos').insert({
             nome,
-            latitude,
-            longitude,
             cep,
             bairro,
             endereco,
             cidade,
-            uf,
+            estado,
             telefone,
             email
         });
