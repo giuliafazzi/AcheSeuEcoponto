@@ -44,8 +44,13 @@ const ProcurarEmpresas = () => {
         // Get address from latitude & longitude.
         Geocode.fromLatLng(lat.toString(), lng.toString()).then(
             response => {
-                setAddress(response.results[0].formatted_address);
-                console.log(address);
+                const rua = response.results[0].address_components[1].short_name
+                const numero = response.results[0].address_components[0].short_name
+                const bairro = response.results[0].address_components[2].short_name
+                const cidade = response.results[0].address_components[3].short_name
+                const estado = response.results[0].address_components[4].short_name
+
+                setAddress(rua + ', ' + numero + ' - ' + bairro + ', ' + cidade + '/' + estado);
             },
             error => {
                 console.error(error);
