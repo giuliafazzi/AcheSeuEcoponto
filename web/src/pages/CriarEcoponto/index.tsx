@@ -3,6 +3,7 @@ import { Link, useHistory } from 'react-router-dom';
 import { FaChevronLeft } from 'react-icons/fa';
 import api from '../../services/api';
 import axios from 'axios';
+import InputMask from "react-input-mask";
 
 import './styles.css';
 
@@ -172,12 +173,14 @@ const CriarEcoponto = () => {
                         <div className="field-group">
                             <div className="field">
                                 <label htmlFor="telefone">Telefone</label>
-                                <input
-                                    type="text"
-                                    name="telefone"
-                                    id="telefone"
-                                    onChange={handleInputChange}
-                                />
+                                <InputMask mask="(99) 99999-9999" onChange={handleInputChange}>
+                                    <input
+                                        type="text"
+                                        name="telefone"
+                                        id="telefone"
+
+                                    />
+                                </InputMask>
                             </div>
 
                             <div className="field">
