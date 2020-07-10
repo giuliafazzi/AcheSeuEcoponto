@@ -1,5 +1,5 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { FaChevronLeft } from 'react-icons/fa';
 import api from '../../services/api';
 import axios from 'axios';
@@ -30,6 +30,17 @@ const CriarEcoponto = () => {
     const [selectedMateriais, setSelectedMateriais] = useState<number[]>([]);
     const [selectedEstado, setSelectedEstado] = useState('0');
     const [selectedCidade, setSelectedCidade] = useState('0');
+
+    const [formData, setFormData] = useState({
+        nome: '',
+        telefone: '',
+        email: '',
+        cep: '',
+        bairro: '',
+        endereco: '',
+    });
+
+    const history = useHistory();
 
     useEffect(() => {
         api.get('materiais').then(response => {
@@ -90,13 +101,57 @@ const CriarEcoponto = () => {
 
     }
 
+    function handleInputChange(event: ChangeEvent<HTMLInputElement>) {
+        const { name, value } = event.target;
+
+        setFormData({ ...formData, [name]: value });
+    }
+
+    async function handleEnviar(event: FormEvent) {
+        event.preventDefault();
+
+        const { nome, telefone, email, cep, bairro, endereco } = formData;
+        const estado = selectedEstado;
+        const cidade = selectedCidade;
+        const materiais = selectedMateriais;
+
+        //const data = new FormData();
+
+        /*data.append('nome', nome);
+        data.append('telefone', telefone);
+        data.append('email', email);
+        data.append('cep', cep);
+        data.append('bairro', bairro);
+        data.append('endereco', endereco);
+        data.append('estado', estado);
+        data.append('cidade', cidade);
+        data.append('materiais', materiais.join(','));*/
+
+        const data = {
+            nome,
+            telefone,
+            email,
+            cep,
+            bairro,
+            endereco,
+            estado,
+            cidade,
+            materiais
+        }
+
+        await api.post('ecopontos', data);
+
+        alert('Ecoponto criado!');
+
+        history.push('/');
+    }
 
     return (
         <div id="page-criar-ecoponto">
             <Header />
 
             <div className="content">
-                <form>
+                <form onSubmit={handleEnviar}>
                     <h1>Cadastrar ecoponto</h1>
 
                     <fieldset>
@@ -106,18 +161,33 @@ const CriarEcoponto = () => {
 
                         <div className="field">
                             <label htmlFor="nome">Nome do local</label>
-                            <input type="text" name="nome" id="nome" />
+                            <input
+                                type="text"
+                                name="nome"
+                                id="nome"
+                                onChange={handleInputChange}
+                            />
                         </div>
 
                         <div className="field-group">
                             <div className="field">
                                 <label htmlFor="telefone">Telefone</label>
-                                <input type="text" name="telefone" id="telefone" />
+                                <input
+                                    type="text"
+                                    name="telefone"
+                                    id="telefone"
+                                    onChange={handleInputChange}
+                                />
                             </div>
 
                             <div className="field">
                                 <label htmlFor="email">E-mail</label>
-                                <input type="email" name="email" id="email" />
+                                <input
+                                    type="email"
+                                    name="email"
+                                    id="email"
+                                    onChange={handleInputChange}
+                                />
                             </div>
                         </div>
                     </fieldset>
@@ -164,18 +234,33 @@ const CriarEcoponto = () => {
                         <div className="field-group">
                             <div className="field">
                                 <label htmlFor="cep">CEP</label>
-                                <input type="text" name="cep" id="cep" />
+                                <input
+                                    type="text"
+                                    name="cep"
+                                    id="cep"
+                                    onChange={handleInputChange}
+                                />
                             </div>
 
                             <div className="field">
                                 <label htmlFor="bairro">Bairro</label>
-                                <input type="text" name="bairro" id="bairro" />
+                                <input
+                                    type="text"
+                                    name="bairro"
+                                    id="bairro"
+                                    onChange={handleInputChange}
+                                />
                             </div>
                         </div>
 
                         <div className="field">
                             <label htmlFor="endereco">Endereço</label>
-                            <input type="text" name="endereco" id="endereco" />
+                            <input
+                                type="text"
+                                name="endereco"
+                                id="endereco"
+                                onChange={handleInputChange}
+                            />
                         </div>
 
 
