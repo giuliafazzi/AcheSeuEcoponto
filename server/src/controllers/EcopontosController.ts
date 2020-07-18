@@ -62,7 +62,19 @@ class EcopontosController {
 
     // Listar ecopontos
     async index(request: Request, response: Response) {
+        const { materiais } = request.query;
 
+        const parsedMateriais = String(materiais)
+            .split(',')
+            .map(material => Number(material.trim()));
+
+        const ecopontos = await knex('ecopontos')
+            .join('materiais_ecopontos', 'ecopontos.id', '=', 'materiais_ecopontos.ecoponto_id')
+            .whereIn('materiais_ecopontos.material_id', parsedMateriais)
+            .distinct()
+            .select('ecopontos.*');
+
+        return response.json({ ecopontos });
     }
 };
 

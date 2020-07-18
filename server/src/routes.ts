@@ -21,6 +21,7 @@ routes.get('/empresas/:id', empresasController.show);
 
 // Ecopontos
 routes.post('/ecopontos', ecopontosController.create);
+routes.get('/ecopontos', ecopontosController.index);
 routes.get('/ecopontos/:id', ecopontosController.show);
 
 // Certificados
