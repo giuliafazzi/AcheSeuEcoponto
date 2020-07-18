@@ -46,13 +46,13 @@ class EcopontosController {
     async show(request: Request, response: Response) {
         const { id } = request.params;
 
-        const ecoponto = await knex('ecoponto').where('id', id).first();
+        const ecoponto = await knex('ecopontos').where('id', id).first();
 
         if (!ecoponto) {
             return response.status(400).json({ message: 'Ecoponto não encontrado' });
         }
 
-        const materiais = await knex('ecoponto')
+        const materiais = await knex('materiais')
             .join('materiais_ecopontos', 'materiais.id', '=', 'materiais_ecopontos.material_id')
             .where('materiais_ecopontos.ecoponto_id', id)
             .select('materiais.material');
