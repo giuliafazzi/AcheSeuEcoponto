@@ -10,6 +10,8 @@ export async function up(knex: Knex) {
         table.string('endereco').notNullable();
         table.string('cidade').notNullable();
         table.string('estado').notNullable();
+        table.decimal('latitude').notNullable();
+        table.decimal('longitude').notNullable();
         table.string('telefone').notNullable();
         table.string('email').notNullable();
         table.boolean('compra');

@@ -11,6 +11,8 @@ class EcopontosController {
             endereco,
             cidade,
             estado,
+            latitude,
+            longitude,
             telefone,
             email,
             materiais
@@ -25,6 +27,8 @@ class EcopontosController {
             endereco,
             cidade,
             estado,
+            latitude,
+            longitude,
             telefone,
             email
         });
