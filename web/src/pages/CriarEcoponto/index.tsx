@@ -1,13 +1,20 @@
 import React, { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { FaChevronLeft } from 'react-icons/fa';
 import api from '../../services/api';
 import axios from 'axios';
 import InputMask from "react-input-mask";
+import Geocode from "react-geocode";
+import config from '../../config.json';
 
 import './styles.css';
 
 import Header from '../../components/Header';
+
+const key = config.map_key;
+Geocode.setApiKey(key);
+Geocode.setLanguage("pt-br");
+Geocode.setRegion("br");
+Geocode.enableDebug();
 
 interface Material {
     id: number;
@@ -27,10 +34,12 @@ const CriarEcoponto = () => {
     const [materiais, setMateriais] = useState<Material[]>([]);
     const [ufs, setUfs] = useState<string[]>([]);
     const [cidades, setCidades] = useState<string[]>([]);
+    const [coordenadas, setCoordenadas] = useState({ lat: 0, lng: 0 });
 
     const [selectedMateriais, setSelectedMateriais] = useState<number[]>([]);
     const [selectedEstado, setSelectedEstado] = useState('0');
     const [selectedCidade, setSelectedCidade] = useState('0');
+    const [selectedCoordenadas, setSelectedCoordenadas] = useState<[number, number]>([0, 0]);
 
     const [formData, setFormData] = useState({
         nome: '',
@@ -106,6 +115,27 @@ const CriarEcoponto = () => {
         const { name, value } = event.target;
 
         setFormData({ ...formData, [name]: value });
+
+        if (['cep', 'bairro', 'endereco'].includes(name)) {
+            decodificarEndereco()
+        }
+    }
+
+    function decodificarEndereco() {
+        Geocode.fromAddress(formData.endereco + ' ' + formData.bairro + ' ' + formData.cep + ' ' + selectedCidade + '/' + selectedEstado).then(
+            response => {
+                const latitude = response.results[0].geometry.location.lat;
+                const longitude = response.results[0].geometry.location.lng;
+
+                setSelectedCoordenadas([
+                    latitude,
+                    longitude,
+                ]);
+            },
+            error => {
+                console.error(error);
+            }
+        );
     }
 
     async function handleEnviar(event: FormEvent) {
@@ -115,6 +145,7 @@ const CriarEcoponto = () => {
         const estado = selectedEstado;
         const cidade = selectedCidade;
         const materiais = selectedMateriais;
+        const [latitude, longitude] = selectedCoordenadas;
 
         //const data = new FormData();
 
@@ -137,6 +168,8 @@ const CriarEcoponto = () => {
             endereco,
             estado,
             cidade,
+            latitude,
+            longitude,
             materiais
         }
 
