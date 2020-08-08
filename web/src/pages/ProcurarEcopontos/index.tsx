@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
 import Geocode from "react-geocode";
 import config from '../../config.json';
 import api from '../../services/api';
@@ -6,20 +7,17 @@ import api from '../../services/api';
 import './styles.css';
 
 import Header from '../../components/Header';
-import Mapa from '../../components/Mapa';
 
 const key = config.map_key;
 Geocode.setApiKey(key);
-
-// set response language. Defaults to english.
 Geocode.setLanguage("pt-br");
-
-// set response region. Its optional.
-// A Geocoding request with region=es (Spain) will return the Spanish city.
 Geocode.setRegion("br");
-
-// Enable or disable logs. Its optional.
 Geocode.enableDebug();
+
+const containerStyle = {
+    width: '100%',
+    height: '100%'
+};
 
 interface Material {
     id: number;
@@ -27,9 +25,32 @@ interface Material {
     imagem_url: string;
 }
 
+interface Ecoponto {
+    id: number;
+    nome: string;
+    cep: string;
+    bairro: string;
+    endereco: string;
+    cidade: string;
+    estado: string;
+    latitude: number,
+    longitude: number,
+    telefone: string;
+    email: string;
+}
+
+interface Marcador {
+    id: number;
+    nome: string;
+    latitude: number;
+    longitude: number;
+}
+
 const ProcurarEcopontos = () => {
     const [materiais, setMateriais] = useState<Material[]>([]);
+    const [ecopontos, setEcopontos] = useState<Ecoponto[]>([]);
     const [center, setCenter] = useState({ lat: 0, lng: 0 });
+    const [marcadores, setMarcadores] = useState<Marcador[]>([]);
     const [address, setAddress] = useState("");
     const [map, setMap] = React.useState(null)
 
@@ -37,7 +58,6 @@ const ProcurarEcopontos = () => {
 
     useEffect(() => {
         api.get('materiais').then(response => {
-            console.log(response.data);
             setMateriais(response.data);
         });
 
@@ -58,8 +78,17 @@ const ProcurarEcopontos = () => {
 
     }, []);
 
+    useEffect(() => {
+        api.get('ecopontos', {
+            params: {
+                materiais: selectedMateriais
+            }
+        }).then(response => {
+            setEcopontos(response.data.ecopontos);
+        })
+    }, [selectedMateriais]);
+
     function decodificarLocalizacao(lat: number, lng: number) {
-        // Get address from latitude & longitude.
         Geocode.fromLatLng(lat.toString(), lng.toString()).then(
             response => {
                 const rua = response.results[0].address_components[1].short_name
@@ -80,7 +109,7 @@ const ProcurarEcopontos = () => {
         const alreadySelected = selectedMateriais.findIndex(material => material === id);
 
         if (alreadySelected >= 0) {
-            const filteredMateriais = selectedMateriais.filter(material => material != id);
+            const filteredMateriais = selectedMateriais.filter(material => material !== id);
 
             setSelectedMateriais(filteredMateriais);
         }
@@ -126,7 +155,28 @@ const ProcurarEcopontos = () => {
                     </div>
 
                     <div className="mapa">
-                        <Mapa />
+                        <div style={{ height: '100%', width: '100%', MozBorderRadius: '8px' }}>
+                            <LoadScript
+                                googleMapsApiKey={key}
+                            >
+                                <GoogleMap
+                                    mapContainerStyle={containerStyle}
+                                    center={center}
+                                    zoom={14}
+                                >
+                                    <Marker
+                                        position={center}
+                                    />
+
+                                    {ecopontos.map(ecoponto => (
+                                        <Marker
+                                            key={String(ecoponto.id)}
+                                            position={{ lat: ecoponto.latitude, lng: ecoponto.longitude }}
+                                        />
+                                    ))}
+                                </GoogleMap>
+                            </LoadScript>
+                        </div>
                     </div>
                 </div>
 
