@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
 import Geocode from "react-geocode";
+import Slider from 'react-input-slider';
 import config from '../../config.json';
 import api from '../../services/api';
 
@@ -46,13 +47,20 @@ interface Marcador {
     longitude: number;
 }
 
+interface Ponto {
+    latitude: number;
+    longitude: number;
+}
+
 const ProcurarEcopontos = () => {
     const [materiais, setMateriais] = useState<Material[]>([]);
+    const [distancia, setDistancia] = useState(0);
+    const [slider, setSlider] = useState({ x: 10, y: 10 });
     const [ecopontos, setEcopontos] = useState<Ecoponto[]>([]);
     const [center, setCenter] = useState({ lat: 0, lng: 0 });
     const [marcadores, setMarcadores] = useState<Marcador[]>([]);
     const [address, setAddress] = useState("");
-    const [map, setMap] = React.useState(null)
+    const [map, setMap] = useState(null)
 
     const [selectedMateriais, setSelectedMateriais] = useState<number[]>([]);
 
@@ -60,8 +68,6 @@ const ProcurarEcopontos = () => {
         api.get('materiais').then(response => {
             setMateriais(response.data);
         });
-
-
     }, []);
 
     useEffect(() => {
@@ -75,7 +81,6 @@ const ProcurarEcopontos = () => {
         } else {
             alert("Not Available");
         }
-
     }, []);
 
     useEffect(() => {
@@ -119,6 +124,22 @@ const ProcurarEcopontos = () => {
 
     }
 
+    function rad(x: number) {
+        return x * Math.PI / 180;
+    };
+
+    function calcularDistancia(p1: Ponto, p2: Ponto) {
+        var R = 6378137;
+        var dLat = rad(p2.latitude - p1.latitude);
+        var dLong = rad(p2.longitude - p1.longitude);
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(rad(p1.latitude)) * Math.cos(rad(p2.latitude)) *
+            Math.sin(dLong / 2) * Math.sin(dLong / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var d = R * c;
+        return d;
+    };
+
     return (
         <div id="page-procurar-ecopontos">
             <Header />
@@ -143,6 +164,19 @@ const ProcurarEcopontos = () => {
                                 </li>
                             ))}
                         </ul>
+
+                    </fieldset>
+
+                    <fieldset>
+                        <legend>
+                            <span className="3">Distância: {distancia}</span>
+                        </legend>
+
+                        <Slider
+                            axis="x"
+                            x={distancia}
+                            onChange={({ x }) => setDistancia(x)}
+                        />
                     </fieldset>
                 </div>
 
@@ -168,12 +202,17 @@ const ProcurarEcopontos = () => {
                                         position={center}
                                     />
 
-                                    {ecopontos.map(ecoponto => (
-                                        <Marker
-                                            key={String(ecoponto.id)}
-                                            position={{ lat: ecoponto.latitude, lng: ecoponto.longitude }}
-                                        />
-                                    ))}
+                                    {ecopontos.map(ecoponto => {
+                                        let dist_ecopontos = calcularDistancia({ latitude: center.lat, longitude: center.lng }, { latitude: ecoponto.latitude, longitude: ecoponto.longitude }) / 1000;
+                                        if (dist_ecopontos <= distancia) {
+                                            return (
+                                                <Marker
+                                                    key={String(ecoponto.id)}
+                                                    position={{ lat: ecoponto.latitude, lng: ecoponto.longitude }}
+                                                />
+                                            )
+                                        }
+                                    })}
                                 </GoogleMap>
                             </LoadScript>
                         </div>
