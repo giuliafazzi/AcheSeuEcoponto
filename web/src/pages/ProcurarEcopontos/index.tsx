@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { GoogleMap, LoadScript, MarkerClusterer, Marker } from '@react-google-maps/api';
+import { GoogleMap, LoadScript, Marker, InfoBox, InfoWindow } from '@react-google-maps/api';
 import Geocode from "react-geocode";
 import Slider from 'react-input-slider';
 import config from '../../config.json';
 import api from '../../services/api';
+import marker from '../../assets/pin.png';
 
 import './styles.css';
 
@@ -140,6 +141,32 @@ const ProcurarEcopontos = () => {
         return d;
     };
 
+    const MapComponent = (props: any) =>
+        <GoogleMap
+            mapContainerStyle={containerStyle}
+            center={center}
+            zoom={14}
+        >
+            <Marker
+                position={center}
+            />
+
+            <div className="pin ecoponto">
+                {ecopontos.map(ecoponto => {
+                    let dist_ecopontos = calcularDistancia({ latitude: center.lat, longitude: center.lng }, { latitude: ecoponto.latitude, longitude: ecoponto.longitude }) / 1000;
+                    if (dist_ecopontos <= distancia) {
+                        return (
+                            <Marker
+                                key={String(ecoponto.id)}
+                                position={{ lat: ecoponto.latitude, lng: ecoponto.longitude }}
+                                icon={marker}
+                            />
+                        )
+                    }
+                })}
+            </div>
+        </GoogleMap>
+
     return (
         <div id="page-procurar-ecopontos">
             <Header />
@@ -209,6 +236,7 @@ const ProcurarEcopontos = () => {
                                                 <Marker
                                                     key={String(ecoponto.id)}
                                                     position={{ lat: ecoponto.latitude, lng: ecoponto.longitude }}
+                                                    icon={marker}
                                                 />
                                             )
                                         }
